@@ -32,7 +32,8 @@ Booking site for the Calvi family summer home. Simple, minimalist, family-only.
 
 ```
 presa/
-├── index.html                        # Entire frontend (HTML + CSS + JS)
+├── index.html                        # Public booking page
+├── admin.html                        # Admin dashboard (login required)
 ├── logo.jpg                          # Circular logo (clipped via CSS)
 ├── CNAME                             # presa.calvi.dev (GitHub Pages)
 ├── supabase/
@@ -41,6 +42,18 @@ presa/
 │           └── index.ts              # Edge Function — sends emails via Resend
 └── .gitignore
 ```
+
+## Admin dashboard
+
+URL: `presa.calvi.dev/admin`
+
+Login: `jccalvih@gmail.com` via Supabase Auth
+
+Features:
+- View all upcoming and past bookings
+- Cancel / delete a booking (frees up those dates instantly)
+- Add manual bookings (block dates for family use)
+- Stats: upcoming reservations, total nights booked, total bookings
 
 ---
 
