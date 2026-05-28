@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin · La Presa</title>
+  <link rel="icon" href="logo.jpg" type="image/jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green:  #1C3A2A;
+      --green2: #2E5740;
+      --cream:  #F2EDE4;
+      --paper:  #EDE7DC;
+      --border: #C8BCA8;
+      --muted:  rgba(28,58,42,0.45);
+      --red:    #8B2E2E;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--cream);
+      color: var(--green);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* ── Login ───────────────────────────────── */
+    #loginScreen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 360px;
+      background: var(--paper);
+      border: 1px solid var(--border);
+      padding: 40px 32px;
+      text-align: center;
+    }
+
+    .login-box img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      clip-path: circle(42% at 50% 50%);
+      margin-bottom: 16px;
+    }
+
+    .login-box h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 1.6rem;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    .login-box .sub {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    .field { margin-bottom: 14px; text-align: left; }
+    .field label {
+      display: block;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+    .field input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.88rem;
+      color: var(--green);
+      outline: none;
+      border-radius: 0;
+      -webkit-appearance: none;
+    }
+    .field input:focus { border-color: var(--green); }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      background: var(--green);
+      color: var(--cream);
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.82; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .login-error {
+      margin-top: 12px;
+      font-size: 0.78rem;
+      color: var(--red);
+      display: none;
+    }
+
+    /* ── Dashboard ───────────────────────────── */
+    #dashboard { display: none; }
+
+    .topbar {
+      background: var(--green);
+      color: var(--cream);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    .btn-logout {
+      background: none;
+      border: 1px solid rgba(242,237,228,0.3);
+      color: var(--cream);
+      padding: 5px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      opacity: 0.8;
+      transition: opacity 0.15s;
+    }
+    .btn-logout:hover { opacity: 1; }
+
+    .content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+
+    /* ── Stats ───────────────────────────────── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 300;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── Section titles ──────────────────────── */
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 1.2rem;
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* ── Booking cards ───────────────────────── */
+    .booking-list { margin-bottom: 48px; }
+
+    .booking-card {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      padding: 18px 20px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .booking-card.past { opacity: 0.45; }
+
+    .booking-info { flex: 1; min-width: 0; }
+
+    .booking-name {
+      font-size: 0.92rem;
+      margin-bottom: 4px;
+    }
+
+    .booking-email {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .booking-dates {
+      font-size: 0.75rem;
+      color: var(--green2);
+    }
+
+    .booking-nights {
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .btn-delete {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--red);
+      padding: 6px 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .btn-delete:hover {
+      background: var(--red);
+      color: var(--cream);
+      border-color: var(--red);
+    }
+
+    .empty-msg {
+      font-size: 0.82rem;
+      color: var(--muted);
+      padding: 20px 0;
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* ── Add manual booking ──────────────────── */
+    .add-form {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin-bottom: 48px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 480px) {
+      .form-row { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(3, 1fr); }
+      .stat-num { font-size: 1.6rem; }
+    }
+
+    /* ── Toggle past ─────────────────────────── */
+    .toggle-past {
+      background: none;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* ── Toast ───────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--green);
+      color: var(--cream);
+      padding: 10px 24px;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<!-- ── Login ──────────────────────────────────── -->
+<div id="loginScreen">
+  <div class="login-box">
+    <img src="logo.jpg" alt="La Presa">
+    <h1>La Presa</h1>
+    <p class="sub">Admin</p>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="loginEmail" value="jccalvih@gmail.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input type="password" id="loginPass" autocomplete="current-password" placeholder="••••••••">
+    </div>
+    <button class="btn-primary" id="btnLogin">Entrar</button>
+    <p class="login-error" id="loginError">Email o contraseña incorrectos.</p>
+  </div>
+</div>
+
+<!-- ── Dashboard ──────────────────────────────── -->
+<div id="dashboard">
+  <div class="topbar">
+    <span class="topbar-title">La Presa · Admin</span>
+    <div class="topbar-right">
+      <span id="adminEmail"></span>
+      <button class="btn-logout" id="btnLogout">Salir</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-num" id="statUpcoming">—</div>
+        <div class="stat-label">Próximas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statNights">—</div>
+        <div class="stat-label">Noches ocupadas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statTotal">—</div>
+        <div class="stat-label">Total reservas</div>
+      </div>
+    </div>
+
+    <!-- Upcoming bookings -->
+    <div class="booking-list">
+      <div class="section-title">
+        <span>Próximas reservaciones</span>
+      </div>
+      <div id="upcomingList"></div>
+    </div>
+
+    <!-- Add manual booking -->
+    <div class="section-title">Agregar reservación manual</div>
+    <div class="add-form">
+      <div class="form-row">
+        <div class="field">
+          <label>Nombre</label>
+          <input type="text" id="addName" placeholder="Nombre completo">
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="addEmail" placeholder="email@ejemplo.com">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Llegada</label>
+          <input type="date" id="addStart">
+        </div>
+        <div class="field">
+          <label>Salida</label>
+          <input type="date" id="addEnd">
+        </div>
+      </div>
+      <button class="btn-primary" id="btnAdd" style="width:auto;padding:11px 32px;">Agregar reservación</button>
+    </div>
+
+    <!-- Past bookings -->
+    <div class="booking-list">
+      <div class="section-title">
+        <span>Reservaciones pasadas</span>
+        <button class="toggle-past" id="btnTogglePast">Mostrar</button>
+      </div>
+      <div id="pastList" style="display:none;"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const { createClient } = supabase;
+  const db = createClient(
+    'https://xlkvhrqlmimzvtfasktd.supabase.co',
+    'sb_publishable_ueu-D2SKZybP4080pUMe0w_r5AO-uVf'
+  );
+
+  const today = new Date().toISOString().split('T')[0];
+
+  // ── Helpers ──────────────────────────────────
+  function parseISO(s) { return new Date(s + 'T12:00:00'); }
+
+  function fmt(iso) {
+    return parseISO(iso).toLocaleDateString('es-MX', {
+      day: 'numeric', month: 'short', year: 'numeric'
+    });
+  }
+
+  function nights(a, b) {
+    return Math.round((parseISO(b) - parseISO(a)) / 86400000);
+  }
+
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2500);
+  }
+
+  // ── Auth ─────────────────────────────────────
+  document.getElementById('loginPass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') login();
+  });
+
+  document.getElementById('btnLogin').addEventListener('click', login);
+
+  async function login() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass  = document.getElementById('loginPass').value;
+    const btn   = document.getElementById('btnLogin');
+    const err   = document.getElementById('loginError');
+
+    btn.textContent = 'Entrando…';
+    btn.disabled = true;
+    err.style.display = 'none';
+
+    const { error } = await db.auth.signInWithPassword({ email, password: pass });
+
+    if (error) {
+      err.style.display = 'block';
+      btn.textContent = 'Entrar';
+      btn.disabled = false;
+    } else {
+      showDashboard(email);
+    }
+  }
+
+  document.getElementById('btnLogout').addEventListener('click', async () => {
+    await db.auth.signOut();
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('loginPass').value = '';
+  });
+
+  async function checkSession() {
+    const { data: { session } } = await db.auth.getSession();
+    if (session) showDashboard(session.user.email);
+  }
+
+  function showDashboard(email) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('adminEmail').textContent = email;
+    loadBookings();
+  }
+
+  // ── Load bookings ─────────────────────────────
+  async function loadBookings() {
+    const { data, error } = await db
+      .from('bookings')
+      .select('*')
+      .order('start_date', { ascending: true });
+
+    if (error) { console.error(error); return; }
+
+    const upcoming = data.filter(b => b.end_date >= today);
+    const past     = data.filter(b => b.end_date < today);
+
+    // Stats
+    const upcomingNights = upcoming.reduce((s, b) => s + nights(b.start_date, b.end_date), 0);
+    document.getElementById('statUpcoming').textContent = upcoming.length;
+    document.getElementById('statNights').textContent   = upcomingNights;
+    document.getElementById('statTotal').textContent    = data.length;
+
+    // Upcoming
+    const upEl = document.getElementById('upcomingList');
+    upEl.innerHTML = upcoming.length
+      ? upcoming.map(b => bookingCard(b, false)).join('')
+      : '<p class="empty-msg">Sin reservaciones próximas</p>';
+
+    // Past
+    const pastEl = document.getElementById('pastList');
+    pastEl.innerHTML = past.length
+      ? [...past].reverse().map(b => bookingCard(b, true)).join('')
+      : '<p class="empty-msg">Sin reservaciones pasadas</p>';
+
+    // Wire delete buttons
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+      btn.addEventListener('click', () => deleteBooking(btn.dataset.id));
+    });
+  }
+
+  function bookingCard(b, isPast) {
+    const n = nights(b.start_date, b.end_date);
+    return `
+      <div class="booking-card${isPast ? ' past' : ''}">
+        <div class="booking-info">
+          <div class="booking-name">${b.name}</div>
+          <div class="booking-email">${b.email}</div>
+          <div class="booking-dates">${fmt(b.start_date)} → ${fmt(b.end_date)}</div>
+        </div>
+        <div class="booking-nights">${n} noche${n !== 1 ? 's' : ''}</div>
+        <button class="btn-delete" data-id="${b.id}">Cancelar</button>
+      </div>`;
+  }
+
+  // ── Delete ────────────────────────────────────
+  async function deleteBooking(id) {
+    if (!confirm('¿Cancelar esta reservación?')) return;
+
+    const { error } = await db.from('bookings').delete().eq('id', id);
+    if (error) { alert('Error al cancelar.'); console.error(error); return; }
+
+    toast('Reservación cancelada');
+    loadBookings();
+  }
+
+  // ── Add manual booking ────────────────────────
+  document.getElementById('btnAdd').addEventListener('click', async () => {
+    const name  = document.getElementById('addName').value.trim();
+    const email = document.getElementById('addEmail').value.trim();
+    const start = document.getElementById('addStart').value;
+    const end   = document.getElementById('addEnd').value;
+
+    if (!name || !start || !end) { alert('Completa nombre, llegada y salida.'); return; }
+    if (end <= start) { alert('La salida debe ser después de la llegada.'); return; }
+
+    const btn = document.getElementById('btnAdd');
+    btn.textContent = 'Guardando…';
+    btn.disabled = true;
+
+    const { error } = await db.from('bookings').insert({
+      name, email: email || '—', start_date: start, end_date: end
+    });
+
+    btn.textContent = 'Agregar reservación';
+    btn.disabled = false;
+
+    if (error) { alert('Error al agregar.'); console.error(error); return; }
+
+    // Clear form
+    ['addName','addEmail','addStart','addEnd'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+
+    toast('Reservación agregada');
+    loadBookings();
+  });
+
+  // ── Toggle past ───────────────────────────────
+  document.getElementById('btnTogglePast').addEventListener('click', function() {
+    const el = document.getElementById('pastList');
+    const visible = el.style.display !== 'none';
+    el.style.display = visible ? 'none' : 'block';
+    this.textContent = visible ? 'Mostrar' : 'Ocultar';
+  });
+
+  // ── Init ──────────────────────────────────────
+  checkSession();
+</script>
+</body>
+</html>
