@@ -542,7 +542,13 @@
 
     // Wire delete buttons
     document.querySelectorAll('.btn-delete').forEach(btn => {
-      btn.addEventListener('click', () => deleteBooking(btn.dataset.id));
+      btn.addEventListener('click', () => deleteBooking(
+        btn.dataset.id,
+        btn.dataset.name,
+        btn.dataset.email,
+        btn.dataset.start,
+        btn.dataset.end
+      ));
     });
   }
 
@@ -556,18 +562,32 @@
           <div class="booking-dates">${fmt(b.start_date)} → ${fmt(b.end_date)}</div>
         </div>
         <div class="booking-nights">${n} noche${n !== 1 ? 's' : ''}</div>
-        <button class="btn-delete" data-id="${b.id}">Cancelar</button>
+        <button class="btn-delete"
+          data-id="${b.id}"
+          data-name="${b.name}"
+          data-email="${b.email}"
+          data-start="${b.start_date}"
+          data-end="${b.end_date}">Cancelar</button>
       </div>`;
   }
 
   // ── Delete ────────────────────────────────────
-  async function deleteBooking(id) {
-    if (!confirm('¿Cancelar esta reservación?')) return;
+  async function deleteBooking(id, name, email, start_date, end_date) {
+    if (!confirm(`¿Cancelar la reservación de ${name}? Se le enviará un correo de notificación.`)) return;
+
+    // Send cancellation email first (non-blocking if it fails)
+    try {
+      await db.functions.invoke('send-cancellation', {
+        body: { name, email, start_date, end_date }
+      })
+    } catch (e) {
+      console.warn('Cancellation email failed:', e)
+    }
 
     const { error } = await db.from('bookings').delete().eq('id', id);
     if (error) { alert('Error al cancelar.'); console.error(error); return; }
 
-    toast('Reservación cancelada');
+    toast('Reservación cancelada · correo enviado');
     loadBookings();
   }
 
