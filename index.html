@@ -342,15 +342,20 @@
 
 <footer>presa.calvi.dev</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  // ── Supabase ───────────────────────────────
+  const { createClient } = supabase;
+  const db = createClient(
+    'https://xlkvhrqlmimzvtfasktd.supabase.co',
+    'sb_publishable_ueu-D2SKZybP4080pUMe0w_r5AO-uVf'
+  );
+
   // ── State ──────────────────────────────────
   const today = new Date(); today.setHours(0,0,0,0);
   let vy = today.getFullYear(), vm = today.getMonth();
-  let d1 = null, d2 = null; // selected range (ISO strings)
-
-  // Bookings persist in localStorage so family members on the same
-  // device/browser share them. Replace with a backend for multi-device use.
-  let bookings = JSON.parse(localStorage.getItem('presa_bookings') || '[]');
+  let d1 = null, d2 = null;
+  let bookedCache = new Set(); // filled from Supabase on load & after booking
 
   const MONTHS = ['January','February','March','April','May','June',
                   'July','August','September','October','November','December'];
@@ -360,23 +365,6 @@
   function isoDate(date) { return date.toISOString().split('T')[0]; }
   function parseISO(s)   { return new Date(s + 'T12:00:00'); }
 
-  function bookedSet() {
-    const s = new Set();
-    bookings.forEach(b => {
-      let d = parseISO(b.start);
-      const e = parseISO(b.end);
-      while (d <= e) { s.add(isoDate(d)); d.setDate(d.getDate()+1); }
-    });
-    return s;
-  }
-
-  function rangeConflicts(a, b) {
-    const booked = bookedSet();
-    let d = parseISO(a), e = parseISO(b);
-    while (d <= e) { if (booked.has(isoDate(d))) return true; d.setDate(d.getDate()+1); }
-    return false;
-  }
-
   function nightCount(a, b) {
     return Math.round((parseISO(b) - parseISO(a)) / 86400000);
   }
@@ -385,13 +373,36 @@
     return parseISO(iso).toLocaleDateString('en-US', opts);
   }
 
+  function rangeConflicts(a, b) {
+    let d = parseISO(a), e = parseISO(b);
+    while (d <= e) { if (bookedCache.has(isoDate(d))) return true; d.setDate(d.getDate()+1); }
+    return false;
+  }
+
+  // ── Fetch booked dates from Supabase ───────
+  async function loadBookings() {
+    const { data, error } = await db
+      .from('bookings')
+      .select('start_date, end_date');
+
+    if (error) { console.error('Failed to load bookings:', error); return; }
+
+    const s = new Set();
+    data.forEach(b => {
+      let d = parseISO(b.start_date);
+      const e = parseISO(b.end_date);
+      while (d <= e) { s.add(isoDate(d)); d.setDate(d.getDate()+1); }
+    });
+    bookedCache = s;
+    render();
+  }
+
   // ── Render calendar ────────────────────────
   function render() {
     const grid = document.getElementById('calGrid');
     document.getElementById('calMonth').textContent = MONTHS[vm] + ' ' + vy;
     grid.innerHTML = '';
 
-    // Day-of-week headers
     DOWS.forEach(d => {
       const el = document.createElement('div');
       el.className = 'cal-dow';
@@ -401,7 +412,6 @@
 
     const firstDow = new Date(vy, vm, 1).getDay();
     const totalDays = new Date(vy, vm+1, 0).getDate();
-    const booked = bookedSet();
 
     for (let i = 0; i < firstDow; i++) {
       const el = document.createElement('div');
@@ -418,13 +428,12 @@
 
       if (date < today) {
         el.classList.add('past');
-      } else if (booked.has(iso)) {
+      } else if (bookedCache.has(iso)) {
         el.classList.add('booked');
       } else {
         el.classList.add('avail');
         el.dataset.iso = iso;
 
-        // Highlight selection
         if (d1 && d2) {
           const lo = d1 < d2 ? d1 : d2, hi = d1 < d2 ? d2 : d1;
           if (iso === lo)                el.classList.add('start');
@@ -446,15 +455,13 @@
     const iso = e.currentTarget.dataset.iso;
 
     if (!d1 || (d1 && d2)) {
-      // Start fresh selection
       d1 = iso; d2 = null;
       hidePanel();
     } else {
-      // Complete selection
       const lo = iso < d1 ? iso : d1, hi = iso < d1 ? d1 : iso;
-      if (lo === hi) { d1 = iso; d2 = null; } // same day → restart
-      else if (rangeConflicts(lo, hi)) { d1 = iso; d2 = null; } // conflict → restart
-      else { d1 = lo; d2 = hi; showPanel(); }
+      if (lo === hi)                    { d1 = iso; d2 = null; }
+      else if (rangeConflicts(lo, hi))  { d1 = iso; d2 = null; }
+      else                              { d1 = lo; d2 = hi; showPanel(); }
     }
 
     render();
@@ -493,25 +500,42 @@
     document.getElementById('btnReserve').addEventListener('click', onReserve);
   }
 
-  function onReserve() {
+  async function onReserve() {
     const name  = document.getElementById('gName').value.trim();
     const email = document.getElementById('gEmail').value.trim();
     if (!name || !email) { alert('Please enter your name and email.'); return; }
 
-    bookings.push({ id: Date.now(), name, email, start: d1, end: d2,
-                    created: new Date().toISOString() });
-    localStorage.setItem('presa_bookings', JSON.stringify(bookings));
+    // Disable button while saving
+    const btn = document.getElementById('btnReserve');
+    btn.textContent = 'Saving…';
+    btn.disabled = true;
+
+    const { error } = await db.from('bookings').insert({
+      name,
+      email,
+      start_date: d1,
+      end_date:   d2
+    });
+
+    if (error) {
+      console.error(error);
+      btn.textContent = 'Confirm reservation';
+      btn.disabled = false;
+      alert('Something went wrong. Please try again.');
+      return;
+    }
 
     const firstName = name.split(' ')[0];
     document.getElementById('formWrap').innerHTML = `
       <div class="success">
         <p>See you soon, ${firstName}.</p>
-        <p class="note">Your stay has been noted. We'll follow up at ${email}.</p>
+        <p class="note">Your stay has been noted. We'll be in touch at ${email}.</p>
       </div>
     `;
 
     d1 = null; d2 = null;
-    setTimeout(() => { hidePanel(); render(); }, 3200);
+    await loadBookings(); // refresh calendar from DB
+    setTimeout(() => hidePanel(), 3200);
   }
 
   // ── Navigation ─────────────────────────────
@@ -523,7 +547,8 @@
   });
 
   // ── Init ───────────────────────────────────
-  render();
+  render();         // draw calendar immediately (empty booked set)
+  loadBookings();   // then fetch from Supabase and re-render
 </script>
 </body>
 </html>
