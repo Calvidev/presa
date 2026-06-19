@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>México · Mundial 2026</title>
+  <link rel="icon" href="logo.jpg" type="image/jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green:  #1C3A2A;
+      --green2: #2E5740;
+      --cream:  #F2EDE4;
+      --paper:  #EDE7DC;
+      --border: #C8BCA8;
+      --muted:  rgba(28,58,42,0.45);
+      --gold:   #A67C2E;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--cream);
+      color: var(--green);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      padding: 56px 24px 0;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 2.4rem;
+      letter-spacing: 0.06em;
+      line-height: 1;
+    }
+
+    .tagline {
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 22px;
+      padding: 8px 18px;
+      background: var(--green);
+      color: var(--cream);
+      font-size: 0.66rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .status-pill .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gold);
+    }
+
+    .rule {
+      width: 1px;
+      height: 32px;
+      background: var(--border);
+      margin: 28px auto;
+    }
+
+    main {
+      width: 100%;
+      max-width: 620px;
+      padding: 0 24px 60px;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    section { margin-bottom: 48px; }
+
+    /* ── Grupo A table ───────────────────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+
+    thead th {
+      text-align: center;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 4px 10px;
+      font-weight: 400;
+    }
+    thead th:first-child { text-align: left; }
+
+    tbody td {
+      text-align: center;
+      padding: 10px 4px;
+      border-top: 1px solid var(--border);
+    }
+    tbody td:first-child {
+      text-align: left;
+      font-weight: 400;
+    }
+
+    tr.mex td { color: var(--green); font-weight: 400; background: rgba(28,58,42,0.05); }
+    tr.mex td:first-child { border-left: 2px solid var(--green); padding-left: 10px; }
+
+    .pts { font-weight: 400; }
+
+    .group-note {
+      margin-top: 16px;
+      font-size: 0.76rem;
+      color: var(--green2);
+      line-height: 1.5;
+    }
+    .group-note .next {
+      display: block;
+      margin-top: 8px;
+      padding: 10px 14px;
+      background: rgba(28,58,42,0.06);
+      border-left: 2px solid var(--gold);
+      font-size: 0.76rem;
+    }
+
+    /* ── Camino a la final ──────────────────── */
+    .road {
+      position: relative;
+      padding-left: 28px;
+    }
+    .road::before {
+      content: '';
+      position: absolute;
+      left: 5px; top: 6px; bottom: 6px;
+      width: 1px;
+      background: var(--border);
+    }
+
+    .step {
+      position: relative;
+      padding-bottom: 28px;
+    }
+    .step:last-child { padding-bottom: 0; }
+
+    .step::before {
+      content: '';
+      position: absolute;
+      left: -28px; top: 3px;
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: var(--cream);
+      border: 1px solid var(--green);
+    }
+    .step.done::before { background: var(--green); }
+
+    .step-round {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+    }
+
+    .step-meta {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      margin-top: 4px;
+    }
+
+    .step-rival {
+      font-size: 0.8rem;
+      color: var(--green2);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .step-rival .tbd {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* ── Candidatos a rival ──────────────────── */
+    .candidates {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .candidate-group {
+      border: 1px solid var(--border);
+      background: var(--paper);
+      padding: 12px 14px;
+    }
+    .candidate-group .g-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .candidate-group .g-teams {
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    .candidates-note {
+      margin-top: 14px;
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 32px 24px 40px;
+      text-align: center;
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    @media (max-width: 480px) {
+      header { padding: 36px 20px 0; }
+      h1 { font-size: 2rem; }
+      main { padding: 0 18px 48px; }
+      .candidates { grid-template-columns: 1fr; }
+      table { font-size: 0.72rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>México</h1>
+  <p class="tagline">Mundial 2026 &middot; Camino a la final</p>
+  <div class="status-pill"><span class="dot"></span>Clasificado &middot; Líder del Grupo A</div>
+</header>
+
+<div class="rule"></div>
+
+<main>
+
+  <section>
+    <p class="section-label">Grupo A</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Equipo</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>DG</th><th>Pts</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="mex">
+          <td>México</td><td>2</td><td>2</td><td>0</td><td>0</td><td>3</td><td>0</td><td>+3</td><td class="pts">6</td>
+        </tr>
+        <tr>
+          <td>Chequia</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td><td class="pts">1</td>
+        </tr>
+        <tr>
+          <td>Sudáfrica</td><td>2</td><td>0</td><td>1</td><td>1</td><td>1</td><td>3</td><td>-2</td><td class="pts">1</td>
+        </tr>
+        <tr>
+          <td>Corea del Sur</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>-1</td><td class="pts">0</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="group-note">
+      México venció 2-0 a Sudáfrica (11 jun) y 1-0 a Corea del Sur (18 jun), asegurando matemáticamente el primer lugar del grupo.
+      <span class="next">Próximo partido (J3): México vs. Chequia · miércoles 24 de junio · Estadio Azteca, CDMX</span>
+    </p>
+  </section>
+
+  <section>
+    <p class="section-label">Camino a la final</p>
+    <div class="road">
+
+      <div class="step done">
+        <div class="step-round">Fase de grupos</div>
+        <div class="step-meta">11 — 24 jun &middot; Estadio Azteca, CDMX y sedes del Grupo A</div>
+        <div class="step-rival">Líder de grupo asegurado tras la J2. Falta el cierre vs. Chequia.</div>
+      </div>
+
+      <div class="step">
+        <div class="step-round">Dieciseisavos de final</div>
+        <div class="step-meta">Martes 30 de junio &middot; Estadio Azteca, CDMX</div>
+        <div class="step-rival">
+          Rival: el mejor tercer lugar entre los Grupos C, E, F, H o I
+          <span class="tbd">(se define hasta el 27 de junio, al cerrar la fase de grupos)</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-round">Octavos de final</div>
+        <div class="step-meta">Sábado 4 de julio &middot; Houston</div>
+        <div class="step-rival"><span class="tbd">Rival por definir — depende del resultado en dieciseisavos</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-round">Cuartos de final</div>
+        <div class="step-meta">Jueves 9 de julio &middot; Boston</div>
+        <div class="step-rival"><span class="tbd">Rival por definir</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-round">Semifinal</div>
+        <div class="step-meta">Martes 14 de julio &middot; Dallas</div>
+        <div class="step-rival"><span class="tbd">Rival por definir</span></div>
+      </div>
+
+      <div class="step">
+        <div class="step-round">Final</div>
+        <div class="step-meta">Domingo 19 de julio &middot; MetLife Stadium, East Rutherford, NJ</div>
+        <div class="step-rival"><span class="tbd">Rival por definir</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <p class="section-label">Posibles rivales en dieciseisavos</p>
+    <div class="candidates">
+      <div class="candidate-group">
+        <div class="g-label">Grupo C</div>
+        <div class="g-teams">Brasil, Marruecos, Haití, Escocia</div>
+      </div>
+      <div class="candidate-group">
+        <div class="g-label">Grupo E</div>
+        <div class="g-teams">Alemania, Curazao, Costa de Marfil, Ecuador</div>
+      </div>
+      <div class="candidate-group">
+        <div class="g-label">Grupo F</div>
+        <div class="g-teams">Países Bajos, Japón, Suecia, Túnez</div>
+      </div>
+      <div class="candidate-group">
+        <div class="g-label">Grupo H</div>
+        <div class="g-teams">España, Cabo Verde, Arabia Saudita, Uruguay</div>
+      </div>
+      <div class="candidate-group">
+        <div class="g-label">Grupo I</div>
+        <div class="g-teams">Francia, Senegal, Irak, Noruega</div>
+      </div>
+    </div>
+    <p class="candidates-note">
+      Como líder del Grupo A, el rival de México en dieciseisavos será el equipo que termine como el mejor tercer lugar
+      entre estos cinco grupos (regla de los "8 mejores terceros"). Aún no se sabe qué equipo será — depende de cómo
+      terminen sus respectivas fases de grupos.
+    </p>
+  </section>
+
+</main>
+
+<footer>Datos al 19 de junio, 2026 &middot; presa.calvi.dev</footer>
+
+</body>
+</html>
