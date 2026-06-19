@@ -252,7 +252,7 @@
 <header>
   <h1>México</h1>
   <p class="tagline">Mundial 2026 &middot; Camino a la final</p>
-  <div class="status-pill"><span class="dot"></span>Clasificado &middot; Líder del Grupo A</div>
+  <div class="status-pill" id="statusPill"><span class="dot"></span>Líder del Grupo A</div>
 </header>
 
 <div class="rule"></div>
@@ -267,23 +267,24 @@
           <th>Equipo</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>DG</th><th>Pts</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="groupBody">
         <tr class="mex">
           <td>México</td><td>2</td><td>2</td><td>0</td><td>0</td><td>3</td><td>0</td><td>+3</td><td class="pts">6</td>
         </tr>
         <tr>
-          <td>Chequia</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td><td class="pts">1</td>
+          <td>Corea del Sur</td><td>2</td><td>1</td><td>0</td><td>1</td><td>2</td><td>2</td><td>0</td><td class="pts">3</td>
+        </tr>
+        <tr>
+          <td>Chequia</td><td>2</td><td>0</td><td>1</td><td>1</td><td>2</td><td>3</td><td>-1</td><td class="pts">1</td>
         </tr>
         <tr>
           <td>Sudáfrica</td><td>2</td><td>0</td><td>1</td><td>1</td><td>1</td><td>3</td><td>-2</td><td class="pts">1</td>
         </tr>
-        <tr>
-          <td>Corea del Sur</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>-1</td><td class="pts">0</td>
-        </tr>
       </tbody>
     </table>
-    <p class="group-note">
+    <p class="group-note" id="groupNote">
       México venció 2-0 a Sudáfrica (11 jun) y 1-0 a Corea del Sur (18 jun), asegurando matemáticamente el primer lugar del grupo.
+      Corea del Sur venció 2-1 a Chequia en la J1; Chequia y Sudáfrica empataron 1-1 en la J2.
       <span class="next">Próximo partido (J3): México vs. Chequia · miércoles 24 de junio · Estadio Azteca, CDMX</span>
     </p>
   </section>
@@ -292,43 +293,43 @@
     <p class="section-label">Camino a la final</p>
     <div class="road">
 
-      <div class="step done">
+      <div class="step done" id="step-groups">
         <div class="step-round">Fase de grupos</div>
-        <div class="step-meta">11 — 24 jun &middot; Estadio Azteca, CDMX y sedes del Grupo A</div>
-        <div class="step-rival">Líder de grupo asegurado tras la J2. Falta el cierre vs. Chequia.</div>
+        <div class="step-meta">11 — 24 jun &middot; sedes del Grupo A</div>
+        <div class="step-rival" id="rival-groups">Líder de grupo asegurado tras la J2. Falta el cierre vs. Chequia.</div>
       </div>
 
-      <div class="step">
+      <div class="step" id="step-r32">
         <div class="step-round">Dieciseisavos de final</div>
         <div class="step-meta">Martes 30 de junio &middot; Estadio Azteca, CDMX</div>
-        <div class="step-rival">
+        <div class="step-rival" id="rival-r32">
           Rival: el mejor tercer lugar entre los Grupos C, E, F, H o I
           <span class="tbd">(se define hasta el 27 de junio, al cerrar la fase de grupos)</span>
         </div>
       </div>
 
-      <div class="step">
+      <div class="step" id="step-r16">
         <div class="step-round">Octavos de final</div>
-        <div class="step-meta">Sábado 4 de julio &middot; Houston</div>
-        <div class="step-rival"><span class="tbd">Rival por definir — depende del resultado en dieciseisavos</span></div>
+        <div class="step-meta">Domingo 5 de julio &middot; Estadio Azteca, CDMX</div>
+        <div class="step-rival" id="rival-r16"><span class="tbd">Rival por definir — depende del resultado en dieciseisavos</span></div>
       </div>
 
-      <div class="step">
+      <div class="step" id="step-qf">
         <div class="step-round">Cuartos de final</div>
-        <div class="step-meta">Jueves 9 de julio &middot; Boston</div>
-        <div class="step-rival"><span class="tbd">Rival por definir</span></div>
+        <div class="step-meta">Sábado 11 de julio &middot; Miami</div>
+        <div class="step-rival" id="rival-qf"><span class="tbd">Rival por definir</span></div>
       </div>
 
-      <div class="step">
+      <div class="step" id="step-sf">
         <div class="step-round">Semifinal</div>
-        <div class="step-meta">Martes 14 de julio &middot; Dallas</div>
-        <div class="step-rival"><span class="tbd">Rival por definir</span></div>
+        <div class="step-meta">Miércoles 15 de julio &middot; Atlanta</div>
+        <div class="step-rival" id="rival-sf"><span class="tbd">Rival por definir</span></div>
       </div>
 
-      <div class="step">
+      <div class="step" id="step-final">
         <div class="step-round">Final</div>
         <div class="step-meta">Domingo 19 de julio &middot; MetLife Stadium, East Rutherford, NJ</div>
-        <div class="step-rival"><span class="tbd">Rival por definir</span></div>
+        <div class="step-rival" id="rival-final"><span class="tbd">Rival por definir</span></div>
       </div>
 
     </div>
@@ -336,7 +337,7 @@
 
   <section>
     <p class="section-label">Posibles rivales en dieciseisavos</p>
-    <div class="candidates">
+    <div class="candidates" id="candidatesGrid">
       <div class="candidate-group">
         <div class="g-label">Grupo C</div>
         <div class="g-teams">Brasil, Marruecos, Haití, Escocia</div>
@@ -367,7 +368,197 @@
 
 </main>
 
-<footer>Datos al 19 de junio, 2026 &middot; presa.calvi.dev</footer>
+<footer id="footerNote">Datos en vivo &middot; presa.calvi.dev</footer>
+
+<script>
+  // ── Live data source ───────────────────────
+  // Free, open, no API key needed. Updated ~daily by the maintainer.
+  // https://github.com/openfootball/worldcup.json
+  const SRC = 'https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json';
+  const MEXICO = 'Mexico';
+  const GROUP = 'Group A';
+
+  const MONTHS_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+  function fmtDateEs(iso) {
+    const [y, m, d] = iso.split('-').map(Number);
+    return `${d} de ${MONTHS_ES[m - 1]}`;
+  }
+
+  function parseKickoffUTC(m) {
+    const tm = /(\d+):(\d+)\s*UTC([+-]\d+)/.exec(m.time || '12:00 UTC+0');
+    const [, hh, mm, off] = tm ? tm : [null, '12', '00', '0'];
+    const [y, mo, d] = m.date.split('-').map(Number);
+    return new Date(Date.UTC(y, mo - 1, d, Number(hh) - Number(off), Number(mm)));
+  }
+
+  function describeSlot(code) {
+    if (!code) return 'por definir';
+    let m = /^([12])([A-L])$/.exec(code);
+    if (m) return (m[1] === '1' ? 'Líder' : '2º lugar') + ' del Grupo ' + m[2];
+    m = /^3((?:[A-L]\/?)+)$/.exec(code);
+    if (m) return 'mejor 3º (Grupos ' + m[1].split('/').join(', ') + ')';
+    return code; // ya es un equipo real
+  }
+
+  function opponentLabel(code, byNum) {
+    const m = /^W(\d+)$/.exec(code || '');
+    if (m && byNum[m[1]]) {
+      const ref = byNum[m[1]];
+      return 'el ganador entre ' + describeSlot(ref.team1) + ' y ' + describeSlot(ref.team2);
+    }
+    return describeSlot(code);
+  }
+
+  function buildGroupTable(matches) {
+    const groupMatches = matches.filter(m => m.group === GROUP);
+    const teams = {};
+    const ensure = name => teams[name] || (teams[name] = { name, pj: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0 });
+
+    groupMatches.forEach(m => { ensure(m.team1); ensure(m.team2); });
+
+    groupMatches.forEach(m => {
+      if (!m.score || !m.score.ft) return;
+      const [s1, s2] = m.score.ft;
+      const t1 = ensure(m.team1), t2 = ensure(m.team2);
+      t1.pj++; t2.pj++;
+      t1.gf += s1; t1.gc += s2;
+      t2.gf += s2; t2.gc += s1;
+      if (s1 > s2) { t1.g++; t2.p++; }
+      else if (s1 < s2) { t2.g++; t1.p++; }
+      else { t1.e++; t2.e++; }
+    });
+
+    const table = Object.values(teams).map(t => ({ ...t, dg: t.gf - t.gc, pts: t.g * 3 + t.e }));
+    table.sort((a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);
+
+    const tbody = document.getElementById('groupBody');
+    tbody.innerHTML = table.map(t => `
+      <tr class="${t.name === MEXICO ? 'mex' : ''}">
+        <td>${t.name === MEXICO ? 'México' : t.name}</td>
+        <td>${t.pj}</td><td>${t.g}</td><td>${t.e}</td><td>${t.p}</td>
+        <td>${t.gf}</td><td>${t.gc}</td><td>${t.dg > 0 ? '+' + t.dg : t.dg}</td>
+        <td class="pts">${t.pts}</td>
+      </tr>`).join('');
+
+    const played = groupMatches.filter(m => m.score && m.score.ft);
+    const pending = groupMatches.filter(m => !m.score || !m.score.ft)
+      .sort((a, b) => parseKickoffUTC(a) - parseKickoffUTC(b));
+
+    const summaryParts = played
+      .filter(m => m.team1 === MEXICO || m.team2 === MEXICO)
+      .map(m => {
+        const [s1, s2] = m.score.ft;
+        const opp = m.team1 === MEXICO ? m.team2 : m.team1;
+        const score = m.team1 === MEXICO ? `${s1}-${s2}` : `${s2}-${s1}`;
+        return `${score} vs. ${opp === MEXICO ? '' : opp} (${fmtDateEs(m.date)})`.replace('vs. (', '(');
+      });
+
+    const top = table[0];
+    let html = top
+      ? (top.name === MEXICO
+          ? `México ${summaryParts.length ? 'venció ' + summaryParts.join(' y ') : 'lidera el Grupo A'} (${top.pts} pts, ${played.filter(m=>m.team1===MEXICO||m.team2===MEXICO).length}/${groupMatches.filter(m=>m.team1===MEXICO||m.team2===MEXICO).length} jugados).`
+          : `México va en el ${table.findIndex(t => t.name === MEXICO) + 1}º lugar del Grupo A con ${teams[MEXICO] ? ensure(MEXICO).pts : 0} pts.`)
+      : 'Cargando standings del Grupo A…';
+
+    const nextMex = pending.find(m => m.team1 === MEXICO || m.team2 === MEXICO);
+    if (nextMex) {
+      const opp = nextMex.team1 === MEXICO ? nextMex.team2 : nextMex.team1;
+      html += `<span class="next">Próximo partido: México vs. ${opp} · ${fmtDateEs(nextMex.date)} · ${nextMex.ground}</span>`;
+    } else if (pending.length === 0) {
+      html += `<span class="next">Fase de grupos completa.</span>`;
+    }
+    document.getElementById('groupNote').innerHTML = html;
+
+    return { table, allPlayed: pending.length === 0, mexicoTop: top && top.name === MEXICO };
+  }
+
+  function buildKnockoutChain(matches) {
+    const numbered = matches.slice().sort((a, b) => parseKickoffUTC(a) - parseKickoffUTC(b));
+    numbered.forEach((m, i) => { m._num = i + 1; });
+    const byNum = {};
+    numbered.forEach(m => { byNum[m._num] = m; });
+
+    const rounds = [
+      ['Round of 32', 'rival-r32', 'step-r32'],
+      ['Round of 16', 'rival-r16', 'step-r16'],
+      ['Quarter-final', 'rival-qf', 'step-qf'],
+      ['Semi-final', 'rival-sf', 'step-sf'],
+      ['Final', 'rival-final', 'step-final'],
+    ];
+
+    let refs = new Set([MEXICO, '1A']);
+    let eliminated = false;
+
+    rounds.forEach(([roundName, rivalId, stepId]) => {
+      const stepEl = document.getElementById(stepId);
+      const rivalEl = document.getElementById(rivalId);
+      if (eliminated) {
+        rivalEl.innerHTML = '<span class="tbd">México no llegó a esta ronda</span>';
+        return;
+      }
+
+      const m = numbered.find(x => x.round === roundName && (refs.has(x.team1) || refs.has(x.team2)));
+      if (!m) {
+        rivalEl.innerHTML = '<span class="tbd">Rival por definir</span>';
+        return;
+      }
+
+      const ourSide = refs.has(m.team1) ? 'team1' : 'team2';
+      const oppSide = ourSide === 'team1' ? 'team2' : 'team1';
+      const oppCode = m[oppSide];
+
+      if (m.score && m.score.ft) {
+        const [sUs, sOpp] = ourSide === 'team1' ? m.score.ft : m.score.ft.slice().reverse();
+        const result = sUs > sOpp ? 'México avanza' : sUs < sOpp ? 'México queda eliminado' : 'Empate';
+        rivalEl.innerHTML = `Rival: <strong>${describeSlot(oppCode)}</strong> · Resultado: ${sUs}-${sOpp} · ${result}`;
+        stepEl.classList.add('done');
+        if (sUs < sOpp) eliminated = true;
+        refs = new Set([MEXICO]);
+      } else {
+        rivalEl.innerHTML = `Rival: ${opponentLabel(oppCode, byNum)} <span class="tbd">(por jugarse)</span>`;
+        refs = new Set([MEXICO, 'W' + m._num]);
+      }
+    });
+  }
+
+  function buildCandidates(matches) {
+    const groups = ['C', 'E', 'F', 'H', 'I'];
+    const grid = document.getElementById('candidatesGrid');
+    grid.innerHTML = groups.map(letter => {
+      const groupName = 'Group ' + letter;
+      const teamSet = new Set();
+      matches.filter(m => m.group === groupName).forEach(m => { teamSet.add(m.team1); teamSet.add(m.team2); });
+      return `<div class="candidate-group">
+        <div class="g-label">Grupo ${letter}</div>
+        <div class="g-teams">${[...teamSet].join(', ') || '—'}</div>
+      </div>`;
+    }).join('');
+  }
+
+  async function loadLiveData() {
+    const res = await fetch(SRC, { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const matches = data.matches;
+
+    const { mexicoTop } = buildGroupTable(matches);
+    buildKnockoutChain(matches);
+    buildCandidates(matches);
+
+    const pill = document.getElementById('statusPill');
+    pill.innerHTML = '<span class="dot"></span>' + (mexicoTop ? 'Líder del Grupo A' : 'Siguiendo al Grupo A');
+
+    document.getElementById('footerNote').textContent =
+      'Datos en vivo (openfootball/worldcup.json) · actualizado ' + new Date().toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' });
+  }
+
+  loadLiveData().catch(err => {
+    console.error('No se pudieron cargar datos en vivo:', err);
+    document.getElementById('footerNote').textContent =
+      'Sin conexión a datos en vivo — mostrando el último snapshot conocido (19 de junio, 2026) · presa.calvi.dev';
+  });
+</script>
 
 </body>
 </html>
