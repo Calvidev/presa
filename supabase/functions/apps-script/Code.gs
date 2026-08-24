@@ -21,8 +21,15 @@ function json(data) {
   return cors(ContentService.createTextOutput(JSON.stringify(data)));
 }
 
-// ── GET — return all bookings ─────────────────
-function doGet() {
+// ── GET — list bookings or handle actions ─────
+function doGet(e) {
+  const p = (e && e.parameter) || {};
+
+  if (p.action === 'add')    return addBooking(p);
+  if (p.action === 'delete') return deleteBooking(p);
+  if (p.action === 'manual') return addManual(p);
+
+  // No action = return all bookings
   const sheet = getSheet();
   const rows  = sheet.getDataRange().getValues();
   if (rows.length <= 1) return json([]);
@@ -41,7 +48,7 @@ function doGet() {
   return json(bookings);
 }
 
-// ── POST — add / delete ───────────────────────
+// ── POST — kept for backward compat ──────────
 function doPost(e) {
   const data = JSON.parse(e.postData.contents);
 
