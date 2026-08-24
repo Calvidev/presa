@@ -350,20 +350,29 @@
 
 <footer>presa.calvi.dev</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // ── Supabase ───────────────────────────────
-  const { createClient } = supabase;
-  const db = createClient(
-    'https://xlkvhrqlmimzvtfasktd.supabase.co',
-    'sb_publishable_ueu-D2SKZybP4080pUMe0w_r5AO-uVf'
-  );
+  // ── API ────────────────────────────────────
+  const API = 'https://script.google.com/macros/s/AKfycbz_luah_ke0L_mOdzxuGvndcsE2wItACjK4FfF13SBuOzUJZcABNL1TsFl5lG9CDyLfGA/exec';
+
+  async function apiGet() {
+    const res = await fetch(API, { redirect: 'follow' });
+    return res.json();
+  }
+
+  async function apiPost(data) {
+    const res = await fetch(API, {
+      method: 'POST',
+      redirect: 'follow',
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  }
 
   // ── State ──────────────────────────────────
   const today = new Date(); today.setHours(0,0,0,0);
   let vy = today.getFullYear(), vm = today.getMonth();
   let d1 = null, d2 = null;
-  let bookedCache = new Set(); // filled from Supabase on load & after booking
+  let bookedCache = new Set();
 
   const MONTHS = ['January','February','March','April','May','June',
                   'July','August','September','October','November','December'];
@@ -387,22 +396,21 @@
     return false;
   }
 
-  // ── Fetch booked dates from Supabase ───────
+  // ── Fetch booked dates from Google Sheets ──
   async function loadBookings() {
-    const { data, error } = await db
-      .from('bookings')
-      .select('start_date, end_date');
-
-    if (error) { console.error('Failed to load bookings:', error); return; }
-
-    const s = new Set();
-    data.forEach(b => {
-      let d = parseISO(b.start_date);
-      const e = parseISO(b.end_date);
-      while (d <= e) { s.add(isoDate(d)); d.setDate(d.getDate()+1); }
-    });
-    bookedCache = s;
-    render();
+    try {
+      const data = await apiGet();
+      const s = new Set();
+      data.forEach(b => {
+        let d = parseISO(b.start_date);
+        const e = parseISO(b.end_date);
+        while (d <= e) { s.add(isoDate(d)); d.setDate(d.getDate()+1); }
+      });
+      bookedCache = s;
+      render();
+    } catch (err) {
+      console.error('Failed to load bookings:', err);
+    }
   }
 
   // ── Render calendar ────────────────────────
@@ -518,18 +526,21 @@
     btn.textContent = 'Saving…';
     btn.disabled = true;
 
-    const { error } = await db.from('bookings').insert({
-      name,
-      email,
-      start_date: d1,
-      end_date:   d2
-    });
-
-    if (error) {
-      console.error(error);
+    let result;
+    try {
+      result = await apiPost({ action: 'add', name, email, start_date: d1, end_date: d2 });
+    } catch (err) {
+      console.error(err);
       btn.textContent = 'Confirm reservation';
       btn.disabled = false;
       alert('Something went wrong. Please try again.');
+      return;
+    }
+
+    if (!result.ok) {
+      btn.textContent = 'Confirm reservation';
+      btn.disabled = false;
+      alert(result.error || 'Something went wrong. Please try again.');
       return;
     }
 
@@ -556,7 +567,7 @@
 
   // ── Init ───────────────────────────────────
   render();         // draw calendar immediately (empty booked set)
-  loadBookings();   // then fetch from Supabase and re-render
+  loadBookings();   // then fetch from Google Sheets and re-render
 </script>
 </body>
 </html>

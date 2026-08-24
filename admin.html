@@ -345,10 +345,6 @@
     <h1>La Presa</h1>
     <p class="sub">Admin</p>
     <div class="field">
-      <label>Email</label>
-      <input type="email" id="loginEmail" value="jccalvih@gmail.com" autocomplete="email">
-    </div>
-    <div class="field">
       <label>Contraseña</label>
       <input type="password" id="loginPass" autocomplete="current-password" placeholder="••••••••">
     </div>
@@ -433,15 +429,25 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const { createClient } = supabase;
-  const db = createClient(
-    'https://xlkvhrqlmimzvtfasktd.supabase.co',
-    'sb_publishable_ueu-D2SKZybP4080pUMe0w_r5AO-uVf'
-  );
+  const API    = 'https://script.google.com/macros/s/AKfycbz_luah_ke0L_mOdzxuGvndcsE2wItACjK4FfF13SBuOzUJZcABNL1TsFl5lG9CDyLfGA/exec';
+  const SECRET = 'CalviPresa26';
 
   const today = new Date().toISOString().split('T')[0];
+
+  async function apiGet() {
+    const res = await fetch(API, { redirect: 'follow' });
+    return res.json();
+  }
+
+  async function apiPost(data) {
+    const res = await fetch(API, {
+      method: 'POST',
+      redirect: 'follow',
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  }
 
   // ── Helpers ──────────────────────────────────
   function parseISO(s) { return new Date(s + 'T12:00:00'); }
@@ -470,77 +476,61 @@
 
   document.getElementById('btnLogin').addEventListener('click', login);
 
-  async function login() {
-    const email = document.getElementById('loginEmail').value.trim();
-    const pass  = document.getElementById('loginPass').value;
-    const btn   = document.getElementById('btnLogin');
-    const err   = document.getElementById('loginError');
+  function login() {
+    const pass = document.getElementById('loginPass').value;
+    const err  = document.getElementById('loginError');
 
-    btn.textContent = 'Entrando…';
-    btn.disabled = true;
-    err.style.display = 'none';
-
-    const { error } = await db.auth.signInWithPassword({ email, password: pass });
-
-    if (error) {
-      err.style.display = 'block';
-      btn.textContent = 'Entrar';
-      btn.disabled = false;
+    if (pass === SECRET) {
+      err.style.display = 'none';
+      showDashboard();
     } else {
-      showDashboard(email);
+      err.style.display = 'block';
     }
   }
 
-  document.getElementById('btnLogout').addEventListener('click', async () => {
-    await db.auth.signOut();
+  document.getElementById('btnLogout').addEventListener('click', () => {
     document.getElementById('dashboard').style.display = 'none';
     document.getElementById('loginScreen').style.display = 'flex';
     document.getElementById('loginPass').value = '';
   });
 
-  async function checkSession() {
-    const { data: { session } } = await db.auth.getSession();
-    if (session) showDashboard(session.user.email);
-  }
-
-  function showDashboard(email) {
+  function showDashboard() {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
-    document.getElementById('adminEmail').textContent = email;
+    document.getElementById('adminEmail').textContent = 'Admin';
     loadBookings();
   }
 
   // ── Load bookings ─────────────────────────────
   async function loadBookings() {
-    const { data, error } = await db
-      .from('bookings')
-      .select('*')
-      .order('start_date', { ascending: true });
+    let data;
+    try {
+      data = await apiGet();
+    } catch (err) {
+      console.error(err);
+      return;
+    }
 
-    if (error) { console.error(error); return; }
+    data.sort((a, b) => a.start_date.localeCompare(b.start_date));
 
     const upcoming = data.filter(b => b.end_date >= today);
     const past     = data.filter(b => b.end_date < today);
 
-    // Stats
     const upcomingNights = upcoming.reduce((s, b) => s + nights(b.start_date, b.end_date), 0);
     document.getElementById('statUpcoming').textContent = upcoming.length;
     document.getElementById('statNights').textContent   = upcomingNights;
     document.getElementById('statTotal').textContent    = data.length;
 
-    // Upcoming
     const upEl = document.getElementById('upcomingList');
     upEl.innerHTML = upcoming.length
       ? upcoming.map(b => bookingCard(b, false)).join('')
       : '<p class="empty-msg">Sin reservaciones próximas</p>';
 
-    // Past
     const pastEl = document.getElementById('pastList');
     pastEl.innerHTML = past.length
       ? [...past].reverse().map(b => bookingCard(b, true)).join('')
       : '<p class="empty-msg">Sin reservaciones pasadas</p>';
 
-    // Wire delete buttons
     document.querySelectorAll('.btn-delete').forEach(btn => {
       btn.addEventListener('click', () => deleteBooking(
         btn.dataset.id,
@@ -575,17 +565,11 @@
   async function deleteBooking(id, name, email, start_date, end_date) {
     if (!confirm(`¿Cancelar la reservación de ${name}? Se le enviará un correo de notificación.`)) return;
 
-    // Send cancellation email first (non-blocking if it fails)
     try {
-      await db.functions.invoke('send-cancellation', {
-        body: { name, email, start_date, end_date }
-      })
-    } catch (e) {
-      console.warn('Cancellation email failed:', e)
+      await apiPost({ action: 'delete', id, secret: SECRET });
+    } catch (err) {
+      alert('Error al cancelar.'); console.error(err); return;
     }
-
-    const { error } = await db.from('bookings').delete().eq('id', id);
-    if (error) { alert('Error al cancelar.'); console.error(error); return; }
 
     toast('Reservación cancelada · correo enviado');
     loadBookings();
@@ -605,16 +589,18 @@
     btn.textContent = 'Guardando…';
     btn.disabled = true;
 
-    const { error } = await db.from('bookings').insert({
-      name, email: email || '—', start_date: start, end_date: end
-    });
+    try {
+      await apiPost({ action: 'manual', name, email: email || '—', start_date: start, end_date: end, secret: SECRET });
+    } catch (err) {
+      alert('Error al agregar.'); console.error(err);
+      btn.textContent = 'Agregar reservación';
+      btn.disabled = false;
+      return;
+    }
 
     btn.textContent = 'Agregar reservación';
     btn.disabled = false;
 
-    if (error) { alert('Error al agregar.'); console.error(error); return; }
-
-    // Clear form
     ['addName','addEmail','addStart','addEnd'].forEach(id => {
       document.getElementById(id).value = '';
     });
@@ -630,9 +616,6 @@
     el.style.display = visible ? 'none' : 'block';
     this.textContent = visible ? 'Mostrar' : 'Ocultar';
   });
-
-  // ── Init ──────────────────────────────────────
-  checkSession();
 </script>
 </body>
 </html>
